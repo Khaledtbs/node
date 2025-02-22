@@ -2096,7 +2096,9 @@ added:
  - v23.0.0
  - v22.10.0
 changes:
-    - version: v23.7.0
+    - version:
+      - v23.7.0
+      - v22.14.0
       pr-url: https://github.com/nodejs/node/pull/56610
       description: This error is no longer thrown on valid yet unsupported syntax.
 -->
@@ -2382,6 +2384,16 @@ added: v15.0.0
 
 An operation failed. This is typically used to signal the general failure
 of an asynchronous operation.
+
+<a id="ERR_OPTIONS_BEFORE_BOOTSTRAPPING"></a>
+
+### `ERR_OPTIONS_BEFORE_BOOTSTRAPPING`
+
+<!-- YAML
+added: REPLACEME
+-->
+
+An attempt was made to get options before the bootstrapping was completed.
 
 <a id="ERR_OUT_OF_RANGE"></a>
 
@@ -3130,7 +3142,9 @@ try {
 ### `ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`
 
 <!-- YAML
-added: v23.7.0
+added:
+  - v23.7.0
+  - v22.14.0
 -->
 
 The provided TypeScript syntax is unsupported.

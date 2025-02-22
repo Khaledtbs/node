@@ -366,15 +366,17 @@ util.formatWithOptions({ colors: true }, 'See object %O', { foo: 42 });
 
 ## `util.getCallSites(frameCountOrOptions, [options])`
 
-> Stability: 1.1 - Active development
-
 <!-- YAML
 added: v22.9.0
 changes:
-  - version: v23.7.0
+  - version:
+    - v23.7.0
+    - v22.14.0
     pr-url: https://github.com/nodejs/node/pull/56584
     description: Property `column` is deprecated in favor of `columnNumber`.
-  - version: v23.7.0
+  - version:
+    - v23.7.0
+    - v22.14.0
     pr-url: https://github.com/nodejs/node/pull/56551
     description: Property `CallSite.scriptId` is exposed.
   - version:
@@ -383,6 +385,8 @@ changes:
     pr-url: https://github.com/nodejs/node/pull/55626
     description: The API is renamed from `util.getCallSite` to `util.getCallSites()`.
 -->
+
+> Stability: 1.1 - Active development
 
 * `frameCount` {number} Optional number of frames to capture as call site objects.
   **Default:** `10`. Allowable range is between 1 and 200.
@@ -1725,13 +1729,13 @@ $ node negate.js --no-logfile --logfile=test.log --color --no-color
 
 ## `util.parseEnv(content)`
 
-> Stability: 1.1 - Active development
-
 <!-- YAML
 added:
   - v21.7.0
   - v20.12.0
 -->
+
+> Stability: 1.1 - Active development
 
 * `content` {string}
 
@@ -1925,8 +1929,6 @@ console.log(util.stripVTControlCharacters('\u001B[4mvalue\u001B[0m'));
 ```
 
 ## `util.styleText(format, text[, options])`
-
-> Stability: 2 - Stable.
 
 <!-- YAML
 added:

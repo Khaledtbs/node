@@ -496,6 +496,8 @@ See [below][Brotli parameters] for more details on Brotli-specific options.
 
 ### For Zstd-based streams
 
+> Stability: 1 - Experimental
+
 There are equivalents to the zlib options for Zstd-based streams, although
 these options have different ranges than the zlib ones:
 
@@ -720,14 +722,18 @@ These advanced options are available for controlling decompression:
 
 ### Zstd constants
 
+> Stability: 1 - Experimental
+
 <!-- YAML
-added: REPLACEME
+added: v23.8.0
 -->
 
 There are several options and other constants available for Zstd-based
 streams:
 
 #### Flush operations
+
+> Stability: 1 - Experimental
 
 The following values are valid flush operations for Zstd-based streams:
 
@@ -736,6 +742,8 @@ The following values are valid flush operations for Zstd-based streams:
 * `zlib.constants.ZSTD_e_end` (default for the last chunk)
 
 #### Compressor options
+
+> Stability: 1 - Experimental
 
 There are several options that can be set on Zstd encoders, affecting
 compression efficiency and speed. Both the keys and the values can be accessed
@@ -749,11 +757,15 @@ The most important options are:
 
 #### Pledged Source Size
 
+> Stability: 1 - Experimental
+
 It's possible to specify the expected total size of the uncompressed input via
 `opts.pledgedSrcSize`. If the size doesn't match at the end of the input,
 compression will fail with the code `ZSTD_error_srcSize_wrong`.
 
 #### Decompressor options
+
+> Stability: 1 - Experimental
 
 These advanced options are available for controlling decompression:
 
@@ -1025,8 +1037,10 @@ the inflate and deflate algorithms.
 
 ## Class: `ZstdOptions`
 
+> Stability: 1 - Experimental
+
 <!-- YAML
-added: REPLACEME
+added: v23.8.0
 -->
 
 <!--type=misc-->
@@ -1054,16 +1068,20 @@ const stream = zlib.createZstdCompress({
 
 ## Class: `zlib.ZstdCompress`
 
+> Stability: 1 - Experimental
+
 <!-- YAML
-added: REPLACEME
+added: v23.8.0
 -->
 
 Compress data using the Zstd algorithm.
 
 ## Class: `zlib.ZstdDecompress`
 
+> Stability: 1 - Experimental
+
 <!-- YAML
-added: REPLACEME
+added: v23.8.0
 -->
 
 Decompress data using the Zstd algorithm.
@@ -1243,8 +1261,10 @@ Creates and returns a new [`Unzip`][] object.
 
 ## `zlib.createZstdCompress([options])`
 
+> Stability: 1 - Experimental
+
 <!-- YAML
-added: REPLACEME
+added: v23.8.0
 -->
 
 * `options` {zstd options}
@@ -1253,8 +1273,10 @@ Creates and returns a new [`ZstdCompress`][] object.
 
 ## `zlib.createZstdDecompress([options])`
 
+> Stability: 1 - Experimental
+
 <!-- YAML
-added: REPLACEME
+added: v23.8.0
 -->
 
 * `options` {zstd options}
@@ -1609,8 +1631,10 @@ Decompress a chunk of data with [`Unzip`][].
 
 ### `zlib.zstdCompress(buffer[, options], callback)`
 
+> Stability: 1 - Experimental
+
 <!-- YAML
-added: REPLACEME
+added: v23.8.0
 -->
 
 * `buffer` {Buffer|TypedArray|DataView|ArrayBuffer|string}
@@ -1619,8 +1643,10 @@ added: REPLACEME
 
 ### `zlib.zstdCompressSync(buffer[, options])`
 
+> Stability: 1 - Experimental
+
 <!-- YAML
-added: REPLACEME
+added: v23.8.0
 -->
 
 * `buffer` {Buffer|TypedArray|DataView|ArrayBuffer|string}
@@ -1631,7 +1657,7 @@ Compress a chunk of data with [`ZstdCompress`][].
 ### `zlib.zstdDecompress(buffer[, options], callback)`
 
 <!-- YAML
-added: REPLACEME
+added: v23.8.0
 -->
 
 * `buffer` {Buffer|TypedArray|DataView|ArrayBuffer|string}
@@ -1640,8 +1666,10 @@ added: REPLACEME
 
 ### `zlib.zstdDecompressSync(buffer[, options])`
 
+> Stability: 1 - Experimental
+
 <!-- YAML
-added: REPLACEME
+added: v23.8.0
 -->
 
 * `buffer` {Buffer|TypedArray|DataView|ArrayBuffer|string}
