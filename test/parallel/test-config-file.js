@@ -4,6 +4,8 @@ const { spawnPromisified } = require('../common');
 const fixtures = require('../common/fixtures');
 const { match, strictEqual } = require('node:assert');
 const { test } = require('node:test');
+const { chmodSync, constants } = require('node:fs');
+const common = require('../common');
 
 test('should handle non existing json', async () => {
   const result = await spawnPromisified(process.execPath, [
@@ -162,7 +164,7 @@ test('should throw at flag not available in NODE_OPTIONS', async () => {
     fixtures.path('rc/not-node-options-flag.json'),
     '-p', '"Hello, World!"',
   ]);
-  match(result.stderr, /Unknown or not allowed option --test/);
+  match(result.stderr, /Unknown or not allowed option test/);
   strictEqual(result.stdout, '');
   strictEqual(result.code, 9);
 });
@@ -253,4 +255,98 @@ test('should not allow users to sneak in a flag', async () => {
   match(result.stderr, /The number of NODE_OPTIONS doesn't match the number of flags in the config file/);
   strictEqual(result.stdout, '');
   strictEqual(result.code, 9);
+});
+
+test('non object root', async () => {
+  const result = await spawnPromisified(process.execPath, [
+    '--no-warnings',
+    '--experimental-config-file',
+    fixtures.path('rc/non-object-root.json'),
+    '-p', '"Hello, World!"',
+  ]);
+  match(result.stderr, /Root value unexpected not an object for/);
+  strictEqual(result.stdout, '');
+  strictEqual(result.code, 9);
+});
+
+test('non object node options', async () => {
+  const result = await spawnPromisified(process.execPath, [
+    '--no-warnings',
+    '--experimental-config-file',
+    fixtures.path('rc/non-object-node-options.json'),
+    '-p', '"Hello, World!"',
+  ]);
+  match(result.stderr, /"nodeOptions" value unexpected for/);
+  strictEqual(result.stdout, '');
+  strictEqual(result.code, 9);
+});
+
+test('should throw correct error when a json is broken', async () => {
+  const result = await spawnPromisified(process.execPath, [
+    '--no-warnings',
+    '--experimental-config-file',
+    fixtures.path('rc/broken.json'),
+    '-p', '"Hello, World!"',
+  ]);
+  match(result.stderr, /Can't parse/);
+  match(result.stderr, /broken\.json: invalid content/);
+  strictEqual(result.stdout, '');
+  strictEqual(result.code, 9);
+});
+
+test('broken value in node_options', async () => {
+  const result = await spawnPromisified(process.execPath, [
+    '--no-warnings',
+    '--experimental-config-file',
+    fixtures.path('rc/broken-node-options.json'),
+    '-p', '"Hello, World!"',
+  ]);
+  match(result.stderr, /Can't parse/);
+  match(result.stderr, /broken-node-options\.json: invalid content/);
+  strictEqual(result.stdout, '');
+  strictEqual(result.code, 9);
+});
+
+test('should use node.config.json as default', async () => {
+  const result = await spawnPromisified(process.execPath, [
+    '--no-warnings',
+    '--experimental-default-config-file',
+    '-p', 'http.maxHeaderSize',
+  ], {
+    cwd: fixtures.path('rc/default'),
+  });
+  strictEqual(result.stderr, '');
+  strictEqual(result.stdout, '10\n');
+  strictEqual(result.code, 0);
+});
+
+test('should override node.config.json when specificied', async () => {
+  const result = await spawnPromisified(process.execPath, [
+    '--no-warnings',
+    '--experimental-default-config-file',
+    '--experimental-config-file',
+    fixtures.path('rc/default/override.json'),
+    '-p', 'http.maxHeaderSize',
+  ], {
+    cwd: fixtures.path('rc/default'),
+  });
+  strictEqual(result.stderr, '');
+  strictEqual(result.stdout, '20\n');
+  strictEqual(result.code, 0);
+});
+// Skip on windows because it doesn't support chmod changing read permissions
+test('should throw an error when the file is non readable', { skip: common.isWindows }, async () => {
+  chmodSync(fixtures.path('rc/non-readable/node.config.json'), constants.O_RDONLY);
+  const result = await spawnPromisified(process.execPath, [
+    '--no-warnings',
+    '--experimental-default-config-file',
+    '-p', 'http.maxHeaderSize',
+  ], {
+    cwd: fixtures.path('rc/non-readable'),
+  });
+  match(result.stderr, /Cannot read configuration from node\.config\.json: permission denied/);
+  strictEqual(result.stdout, '');
+  strictEqual(result.code, 9);
+  chmodSync(fixtures.path('rc/non-readable/node.config.json'),
+            constants.S_IRWXU | constants.S_IRWXG | constants.S_IRWXO);
 });

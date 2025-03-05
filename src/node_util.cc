@@ -244,7 +244,10 @@ static void ParseEnv(const FunctionCallbackInfo<Value>& args) {
   Utf8Value content(env->isolate(), args[0]);
   Dotenv dotenv{};
   dotenv.ParseContent(content.ToStringView());
-  args.GetReturnValue().Set(dotenv.ToObject(env));
+  Local<Object> obj;
+  if (dotenv.ToObject(env).ToLocal(&obj)) {
+    args.GetReturnValue().Set(obj);
+  }
 }
 
 static void GetCallSites(const FunctionCallbackInfo<Value>& args) {
@@ -350,9 +353,25 @@ static void IsInsideNodeModules(const FunctionCallbackInfo<Value>& args) {
 
 static void DefineLazyPropertiesGetter(
     Local<v8::Name> name, const v8::PropertyCallbackInfo<Value>& info) {
-  Realm* realm = Realm::GetCurrent(info);
-  Isolate* isolate = realm->isolate();
-  auto context = isolate->GetCurrentContext();
+  Isolate* isolate = info.GetIsolate();
+  // This getter has no JavaScript function representation and is not
+  // invoked in the creation context.
+  // When this getter is invoked in a vm context, the `Realm::GetCurrent(info)`
+  // returns a nullptr and retrieve the creation context via `this` object and
+  // get the creation Realm.
+  Local<Value> receiver_val = info.This();
+  if (!receiver_val->IsObject()) {
+    THROW_ERR_INVALID_INVOCATION(isolate);
+    return;
+  }
+  Local<Object> receiver = receiver_val.As<Object>();
+  Local<Context> context;
+  if (!receiver->GetCreationContext().ToLocal(&context)) {
+    THROW_ERR_INVALID_INVOCATION(isolate);
+    return;
+  }
+
+  Realm* realm = Realm::GetCurrent(context);
   Local<Value> arg = info.Data();
   Local<Value> require_result;
   if (!realm->builtin_module_require()
@@ -368,6 +387,7 @@ static void DefineLazyPropertiesGetter(
   }
   info.GetReturnValue().Set(ret);
 }
+
 static void DefineLazyProperties(const FunctionCallbackInfo<Value>& args) {
   // target: object, id: string, keys: string[][, enumerable = true]
   CHECK_GE(args.Length(), 3);
